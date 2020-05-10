@@ -1174,6 +1174,13 @@ bool FatFile::sync() {
       setLe16(dir->accessDate, date);
       setLe16(dir->modifyTime, time);
     }
+
+    // set file attributes
+    dir->attributes = isReadOnly() ? (dir->attributes | FAT_ATTRIB_READ_ONLY) : (dir->attributes & ~FAT_ATTRIB_READ_ONLY);
+    dir->attributes = isHidden() ? (dir->attributes | FAT_ATTRIB_HIDDEN) : (dir->attributes & ~FAT_ATTRIB_HIDDEN);
+    dir->attributes = isSystem() ? (dir->attributes | FAT_ATTRIB_SYSTEM) : (dir->attributes & ~FAT_ATTRIB_SYSTEM);
+    dir->attributes = isArchive() ? (dir->attributes | FAT_ATTRIB_ARCHIVE) : (dir->attributes & ~FAT_ATTRIB_ARCHIVE);
+
     // clear directory dirty
     m_flags &= ~FILE_FLAG_DIR_DIRTY;
   }

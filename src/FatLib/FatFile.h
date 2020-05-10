@@ -323,6 +323,10 @@ class FatFile {
   bool isHidden() const {
     return m_attributes & FILE_ATTR_HIDDEN;
   }
+  void makeHidden(bool flag) {
+    m_attributes = flag ? (m_attributes | FILE_ATTR_HIDDEN) : (m_attributes & ~FILE_ATTR_HIDDEN);
+    m_flags |= FILE_FLAG_DIR_DIRTY;
+  }
   /** \return true if this file has a Long File Name. */
   bool isLFN() const {
     return m_lfnOrd;
@@ -347,6 +351,10 @@ class FatFile {
   bool isReadOnly() const {
     return m_attributes & FILE_ATTR_READ_ONLY;
   }
+  void makeReadOnly(bool flag) {
+    m_attributes = flag ? (m_attributes | FILE_ATTR_READ_ONLY) : (m_attributes & ~FILE_ATTR_READ_ONLY);
+    m_flags |= FILE_FLAG_DIR_DIRTY;
+  }
   /** \return True if this is a subdirectory. */
   bool isSubDir() const {
     return m_attributes & FILE_ATTR_SUBDIR;
@@ -354,6 +362,18 @@ class FatFile {
   /** \return True if this is a system file. */
   bool isSystem() const {
     return m_attributes & FILE_ATTR_SYSTEM;
+  }
+  void makeSystem(bool flag) {
+    m_attributes = flag ? (m_attributes | FILE_ATTR_SYSTEM) : (m_attributes & ~FILE_ATTR_SYSTEM);
+    m_flags |= FILE_FLAG_DIR_DIRTY;
+  }
+  /** \return True if this is a system file else false. */
+  bool isArchive() const {
+    return m_attributes & FILE_ATTR_ARCHIVE;
+  }
+  void makeArchive(bool flag) {
+    m_attributes = flag ? (m_attributes | FILE_ATTR_ARCHIVE) : (m_attributes & ~FILE_ATTR_ARCHIVE);
+    m_flags |= FILE_FLAG_DIR_DIRTY;
   }
   /** \return True file is writable. */
   bool isReadable() const {
@@ -923,6 +943,8 @@ class FatFile {
   static const uint8_t FILE_ATTR_ROOT_FIXED = 0X20;
   /** A FAT32 root directory */
   static const uint8_t FILE_ATTR_ROOT32 = 0X40;
+  /** Entry is for an archived file */
+  static const uint8_t FILE_ATTR_ARCHIVE = 0X80;
   /** Entry is for root. */
   static const uint8_t FILE_ATTR_ROOT =
                        FILE_ATTR_ROOT_FIXED | FILE_ATTR_ROOT32;
